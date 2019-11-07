@@ -1,0 +1,13 @@
+# local stuff
+*.DS_Store*
+*.pkg
+kubeconfig.yaml
+get_helm.sh
+tiller
+helm
+
+# kubectl
+**/.kube/*
+
+# helm
+**/.helm/*
