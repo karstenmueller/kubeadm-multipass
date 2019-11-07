@@ -5,7 +5,7 @@ set -eo pipefail
 NODES=$(echo worker{1..2})
 
 for NODE in ${NODES}; do
-  (multipass delete ${NODE}; multipass purge) || true
+  (multipass delete ${NODE} >/dev/null 2>&1; multipass purge) || true
   multipass launch --name ${NODE} --cpus 2 --mem 2G --disk 8G
   multipass info ${NODE}
 done
@@ -31,7 +31,7 @@ for NODE in ${NODES}; do
   multipass exec ${NODE} -- bash -c 'sudo swapoff -a'
   multipass exec ${NODE} -- bash -c "sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab"
   multipass exec ${NODE} -- bash -c 'sudo sysctl net.bridge.bridge-nf-call-iptables=1'
-  multipass exec {NODE} -- bash -c 'sudo apt -y autoremove'
+  multipass exec ${NODE} -- bash -c 'sudo apt -y autoremove'
 done
 
 echo "Now running kubeadm join nodes"

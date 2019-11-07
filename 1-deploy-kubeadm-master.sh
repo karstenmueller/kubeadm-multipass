@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-(multipass delete master; multipass purge) || true
+(multipass delete master >/dev/null 2>&1; multipass purge) || true
 multipass launch ubuntu --name master --cpus 2 --mem 2G --disk 8G || true
 multipass info master
 

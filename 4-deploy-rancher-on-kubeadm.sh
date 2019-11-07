@@ -10,10 +10,8 @@ helm version | grep v3.0.0 || bash get_helm.sh --version v3.0.0-rc.3
 rm -f get_helm.sh
 export HELM_HOME=".helm"
 rm -rf .helm
-helm init
-helm version | grep v3.0.0
 # helm init --service-account tiller --override spec.selector.matchLabels.'name'='tiller',spec.selector.matchLabels.'app'='helm' --output yaml | sed 's@apiVersion: extensions/v1beta1@apiVersion: apps/v1@' | kubectl apply -f -
-kubectl rollout status deployment tiller-deploy -n kube-system
+# kubectl rollout status deployment tiller-deploy -n kube-system
 # sleep 60
 #helm install stable/cert-manager --name cert-manager --namespace kube-system --version v0.5.2
 #sleep 60
@@ -26,9 +24,10 @@ kubectl create ns cattle-system || true
 # helm install --name rancher rancher-latest/rancher --namespace cattle-system --set hostname=node2  --set ingress.tls.source=secret --set privateCA=true
 # helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 # helm init --client-only
-helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+release="stable"
+helm repo add rancher-$release https://releases.rancher.com/server-charts/$release
 helm delete rancher --namespace cattle-system || true
-helm install rancher rancher-latest/rancher --replace --namespace cattle-system --set hostname=localhost --set tls=external
+helm install rancher rancher-$release/rancher --namespace cattle-system --set hostname=localhost --set tls=external
 echo "############################################################################"
 echo "This should take about 2 minutes, please wait ... "
 echo "in the meanwhile open a new shell, change to the install dir and run:"
@@ -48,4 +47,5 @@ echo "##########################################################################
 echo "Hope you have fun with kubeadm on multipass"
 echo "If you have any questions and would like to join us on Slack, here you go:"
 echo "https://kubernauts-slack-join.herokuapp.com/"
-kubectl port-forward -n cattle-system $rancher 4443:443
+kubectl port-forward -n cattle-system $rancher 4443:443 &
+
