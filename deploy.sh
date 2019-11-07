@@ -1,8 +1,12 @@
 #!/bin/bash
 res1=$(date +%s)
-./1-deploy-kubeadm-matser.sh
+./1-deploy-kubeadm-master.sh
+echo "# --------------------------------------------------------------------------"
 ./2-deploy-kubeadm-nodes.sh
+echo "# --------------------------------------------------------------------------"
 ./3-kubeadm_join_nodes.sh
+echo "# --------------------------------------------------------------------------"
+./4-deploy-rancher-on-kubeadm.sh
 res2=$(date +%s)
 dt=$(echo "$res2 - $res1" | bc)
 dd=$(echo "$dt/86400" | bc)
